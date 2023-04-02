@@ -11,20 +11,22 @@ const Entries_INITIAL_STATE: EntriesState = {
   entries: [
     {
       _id: uuidv4(),
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit',
+      description:
+        'Pendiente: Lorem ipsum dolor sit amet consectetur adipisicing elit',
       status: 'pending',
       createdAt: Date.now(),
     },
     {
       _id: uuidv4(),
       description:
-        'Magnam consequuntur a ex, tenetur nostrum cumque possimus dolore',
+        'En-Progreso: Magnam consequuntur a ex, tenetur nostrum cumque possimus dolore',
       status: 'in-progress',
       createdAt: Date.now() - 100000,
     },
     {
       _id: uuidv4(),
-      description: 'blanditiis quaerat ea fugiat recusandae! Veniam maiores',
+      description:
+        'Terminadas: blanditiis quaerat ea fugiat recusandae! Veniam maiores',
       status: 'finished',
       createdAt: Date.now() - 10000,
     },
