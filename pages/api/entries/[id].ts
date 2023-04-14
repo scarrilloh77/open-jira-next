@@ -44,16 +44,22 @@ const updateEntry = async (req: NextApiRequest, res: NextApiResponse) => {
     status = entryToUpdate.status,
   } = req.body;
 
-  const updatedEntry = await Entry.findByIdAndUpdate(
-    id,
-    {
-      description,
-      status,
-    },
-    { runValidators: true, new: true } //runValidator para que valide que el status esta entre las opciones. new para que retorne el nuevo objeto actualizado.
-  );
-
-  res.status(200).json(updatedEntry!); // El updatedEntry nunca sera null.
-
-  await db.disconnect();
+  try {
+    // Esto es una consulta a base de datos
+    //runValidator para que valide que el status esta entre las opciones. new para que retorne el nuevo objeto actualizado.
+    const updatedEntry = await Entry.findByIdAndUpdate(
+      id,
+      {
+        description,
+        status,
+      },
+      { runValidators: true, new: true }
+    );
+    await db.disconnect();
+    res.status(200).json(updatedEntry!); // El updatedEntry nunca sera null.
+  } catch (error: any) {
+    console.log({ error });
+    await db.disconnect();
+    res.status(400).json({ message: error.errors.status.message });
+  }
 };
