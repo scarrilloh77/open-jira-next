@@ -20,6 +20,8 @@ export default function handler(
   }
 
   switch (req.method) {
+    case 'GET':
+      return getEntry(req, res);
     case 'PUT':
       return updateEntry(req, res);
 
@@ -27,6 +29,20 @@ export default function handler(
       return res.status(400).json({ message: 'Metodo no existe!' });
   }
 }
+
+const getEntry = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { id } = req.query;
+  await db.connect();
+
+  const entryInDB = await Entry.findById(id);
+  await db.disconnect();
+
+  if (!entryInDB) {
+    return res.status(400).json({ message: `No hay entrada con el id: ${id}` });
+  }
+
+  res.status(200).json(entryInDB);
+};
 
 const updateEntry = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
