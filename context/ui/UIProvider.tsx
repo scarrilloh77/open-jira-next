@@ -13,7 +13,11 @@ const UI_INITIAL_STATE: UIState = {
   isDragging: false,
 };
 
-export const UIProvider: FC = ({ children }) => {
+interface Props {
+  children: JSX.Element;
+}
+
+export const UIProvider: FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(uiReducer, UI_INITIAL_STATE);
 
   const openSideMenu = () => dispatch({ type: 'UI - Open Sidebar' });

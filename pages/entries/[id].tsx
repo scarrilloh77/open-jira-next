@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useContext, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import {
   Button,
@@ -21,6 +21,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutline';
 import { Layout } from '../../components/layouts';
 import { Entry, EntryStatus } from '../../interfaces';
 import { dbEntries } from '../../database';
+import { EntriesContext } from '../../context/entries';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 
@@ -30,6 +31,7 @@ interface Props {
 
 export const EntryPage: FC<Props> = ({ entry }) => {
   //Siempre llegara entry, si no llega ni siquiera se renderizara la page.
+  const { updateEntry } = useContext(EntriesContext);
   const [inputValue, setInputValue] = useState(entry.description);
   const [status, setStatus] = useState<EntryStatus>(entry.status);
   const [touched, setTouched] = useState(false);
@@ -44,7 +46,15 @@ export const EntryPage: FC<Props> = ({ entry }) => {
     setStatus(event.target.value as EntryStatus);
   };
 
-  const onSave = () => {};
+  const onSave = () => {
+    if (inputValue.trim().length === 0) return;
+    const updatedEntry: Entry = {
+      ...entry,
+      status,
+      description: inputValue,
+    };
+    updateEntry(updatedEntry, true);
+  };
 
   return (
     <Layout title={inputValue.substring(0, 20) + '...'}>

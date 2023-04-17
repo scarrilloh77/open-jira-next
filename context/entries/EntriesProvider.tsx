@@ -2,6 +2,7 @@ import { FC, useEffect, useReducer } from 'react';
 import { EntriesContext, entriesReducer } from './';
 import { Entry } from '../../interfaces';
 import { entriesApi } from '../../apis';
+import { useSnackbar } from 'notistack';
 
 export interface EntriesState {
   entries: Entry[];
@@ -11,7 +12,12 @@ const Entries_INITIAL_STATE: EntriesState = {
   entries: [],
 };
 
-export const EntriesProvider: FC = ({ children }) => {
+interface Props {
+  children: JSX.Element;
+}
+
+export const EntriesProvider: FC<Props> = ({ children }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [state, dispatch] = useReducer(entriesReducer, Entries_INITIAL_STATE);
 
   const addNewEntry = async (description: string) => {
@@ -19,13 +25,26 @@ export const EntriesProvider: FC = ({ children }) => {
     dispatch({ type: '[Entry] - Add-Entry', payload: data });
   };
 
-  const updateEntry = async ({ _id, description, status }: Entry) => {
+  const updateEntry = async (
+    { _id, description, status }: Entry,
+    showSnackbar: boolean = false
+  ) => {
     try {
       const { data } = await entriesApi.put<Entry>(`/entries/${_id}`, {
         description,
         status,
       }); // OJO CON EL CONSUMO.
       dispatch({ type: '[Entry] - Entry-Updated', payload: data });
+      if (showSnackbar) {
+        enqueueSnackbar('Entrada actualizada', {
+          variant: 'success',
+          autoHideDuration: 1000,
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+        });
+      }
     } catch (error) {
       console.log(error);
     }
